@@ -41,8 +41,8 @@ pub fn get_status() -> ExpectStatus {
 pub fn get_abi_version(module: &Module) -> AbiVersion {
     if module.get_export("proxy_abi_version_0_1_0") != None {
         AbiVersion::ProxyAbiVersion0_1_0
-    } else if module.get_export("proxy_abi_version_0_2_0") != None {
-        AbiVersion::ProxyAbiVersion0_2_0
+    } else if module.get_export("proxy_abi_version_0_2_1") != None {
+        AbiVersion::ProxyAbiVersion0_2_1
     } else {
         panic!("Error: test-framework does not support proxy-wasm modules of this abi version");
     }
@@ -311,41 +311,47 @@ fn get_hostfunc(store: &Store, _abi_version: AbiVersion, import: &ImportType) ->
 
         /* ---------------------------------- Continue/Close/Reply/Route ---------------------------------- */
         "proxy_continue_stream" => {
-            Some(Func::wrap(&store, |_caller: Caller<'_>| -> i32 {
-                // Default Function:
-                // Expectation:
-                assert_eq!(
-                    HOST.lock().unwrap().staged.get_abi_version(),
-                    AbiVersion::ProxyAbiVersion0_2_0
-                );
-                println!(
-                    "[vm->host] proxy_continue_stream() status: {:?}",
-                    get_status()
-                );
-                println!(
-                    "[vm<-host] proxy_continue_stream() return: {:?}",
-                    Status::Ok
-                );
-                assert_ne!(get_status(), ExpectStatus::Failed);
-                set_status(ExpectStatus::Unexpected);
-                return Status::Ok as i32;
-            }))
+            Some(Func::wrap(
+                &store,
+                |_caller: Caller<'_>, _stream_type: i32| -> i32 {
+                    // Default Function:
+                    // Expectation:
+                    assert_eq!(
+                        HOST.lock().unwrap().staged.get_abi_version(),
+                        AbiVersion::ProxyAbiVersion0_2_1
+                    );
+                    println!(
+                        "[vm->host] proxy_continue_stream() status: {:?}",
+                        get_status()
+                    );
+                    println!(
+                        "[vm<-host] proxy_continue_stream() return: {:?}",
+                        Status::Ok
+                    );
+                    assert_ne!(get_status(), ExpectStatus::Failed);
+                    set_status(ExpectStatus::Unexpected);
+                    return Status::Ok as i32;
+                },
+            ))
         }
 
         "proxy_close_stream" => {
-            Some(Func::wrap(&store, |_caller: Caller<'_>| -> i32 {
-                // Default Function:
-                // Expectation:
-                assert_eq!(
-                    HOST.lock().unwrap().staged.get_abi_version(),
-                    AbiVersion::ProxyAbiVersion0_2_0
-                );
-                println!("[vm->host] proxy_close_stream() status: {:?}", get_status());
-                println!("[vm<-host] proxy_close_stream() return: {:?}", Status::Ok);
-                assert_ne!(get_status(), ExpectStatus::Failed);
-                set_status(ExpectStatus::Unexpected);
-                return Status::Ok as i32;
-            }))
+            Some(Func::wrap(
+                &store,
+                |_caller: Caller<'_>, _stream_type: i32| -> i32 {
+                    // Default Function:
+                    // Expectation:
+                    assert_eq!(
+                        HOST.lock().unwrap().staged.get_abi_version(),
+                        AbiVersion::ProxyAbiVersion0_2_1
+                    );
+                    println!("[vm->host] proxy_close_stream() status: {:?}", get_status());
+                    println!("[vm<-host] proxy_close_stream() return: {:?}", Status::Ok);
+                    assert_ne!(get_status(), ExpectStatus::Failed);
+                    set_status(ExpectStatus::Unexpected);
+                    return Status::Ok as i32;
+                },
+            ))
         }
 
         "proxy_continue_request" => {
@@ -1455,51 +1461,65 @@ fn get_hostfunc(store: &Store, _abi_version: AbiVersion, import: &ImportType) ->
 
         /* ---------------------------------- Metrics ---------------------------------- */
         "proxy_define_metric" => {
-            Some(Func::wrap(&store, |_caller: Caller<'_>| -> i32 {
-                // Default Function:
-                // Expectation:
-                println!(
-                    "[vm->host] proxy_define_metric() -> (...) status: {:?}",
-                    get_status()
-                );
-                println!(
-                    "[vm<-host] proxy_define_metric() -> (..) return: {:?}",
-                    Status::InternalFailure
-                );
-                return Status::InternalFailure as i32;
-            }))
+            Some(Func::wrap(
+                &store,
+                |_caller: Caller<'_>,
+                 _metric_type: i32,
+                 _name_ptr: i32,
+                 _name_size: i32,
+                 _return_id: i32|
+                 -> i32 {
+                    // Default Function:
+                    // Expectation:
+                    println!(
+                        "[vm->host] proxy_define_metric() -> (...) status: {:?}",
+                        get_status()
+                    );
+                    println!(
+                        "[vm<-host] proxy_define_metric() -> (..) return: {:?}",
+                        Status::InternalFailure
+                    );
+                    return Status::InternalFailure as i32;
+                },
+            ))
         }
 
         "proxy_increment_metric" => {
-            Some(Func::wrap(&store, |_caller: Caller<'_>| -> i32 {
-                // Default Function:
-                // Expectation:
-                println!(
-                    "[vm->host] proxy_increment_metric() -> (...) status: {:?}",
-                    get_status()
-                );
-                println!(
-                    "[vm<-host] proxy_increment_metric() -> (..) return: {:?}",
-                    Status::InternalFailure
-                );
-                return Status::InternalFailure as i32;
-            }))
+            Some(Func::wrap(
+                &store,
+                |_caller: Caller<'_>, _metric_id: i32, _value: i64| -> i32 {
+                    // Default Function:
+                    // Expectation:
+                    println!(
+                        "[vm->host] proxy_increment_metric() -> (...) status: {:?}",
+                        get_status()
+                    );
+                    println!(
+                        "[vm<-host] proxy_increment_metric() -> (..) return: {:?}",
+                        Status::InternalFailure
+                    );
+                    return Status::InternalFailure as i32;
+                },
+            ))
         }
 
         "proxy_record_metric" => {
-            Some(Func::wrap(&store, |_caller: Caller<'_>| -> i32 {
-                // Default Function:
-                // Expectation:
-                println!(
-                    "[vm->host] proxy_record_metric() -> (...) status: {:?}",
-                    get_status()
-                );
-                println!(
-                    "[vm<-host] proxy_record_metric() -> (..) return: {:?}",
-                    Status::InternalFailure
-                );
-                return Status::InternalFailure as i32;
-            }))
+            Some(Func::wrap(
+                &store,
+                |_caller: Caller<'_>, _metric_id: i32, _value: i64| -> i32 {
+                    // Default Function:
+                    // Expectation:
+                    println!(
+                        "[vm->host] proxy_record_metric() -> (...) status: {:?}",
+                        get_status()
+                    );
+                    println!(
+                        "[vm<-host] proxy_record_metric() -> (..) return: {:?}",
+                        Status::InternalFailure
+                    );
+                    return Status::InternalFailure as i32;
+                },
+            ))
         }
 
         "proxy_get_metric" => {

@@ -120,7 +120,7 @@ pub enum ReturnType {
 pub enum AbiVersion {
     UnknownAbiVersion,
     ProxyAbiVersion0_1_0,
-    ProxyAbiVersion0_2_0,
+    ProxyAbiVersion0_2_1,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

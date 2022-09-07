@@ -436,7 +436,7 @@ impl Tester {
             }
 
             FunctionCall::ProxyOnForeignFunction(root_context_id, function_id, data_size) => {
-                assert_eq!(self.abi_version, AbiVersion::ProxyAbiVersion0_2_0);
+                assert_eq!(self.abi_version, AbiVersion::ProxyAbiVersion0_2_1);
                 let proxy_on_foreign_function = self
                     .instance
                     .get_func("proxy_on_foreign_function")
@@ -590,7 +590,7 @@ impl Tester {
                     AbiVersion::ProxyAbiVersion0_1_0 => {
                         proxy_on_request_headers.get2::<i32, i32, i32>()?(context_id, num_headers)?
                     }
-                    AbiVersion::ProxyAbiVersion0_2_0 => proxy_on_request_headers
+                    AbiVersion::ProxyAbiVersion0_2_1 => proxy_on_request_headers
                         .get3::<i32, i32, i32, i32>()?(
                         context_id,
                         num_headers,
@@ -681,7 +681,7 @@ impl Tester {
                     AbiVersion::ProxyAbiVersion0_1_0 => {
                         proxy_on_response_headers.get2::<i32, i32, i32>()?(context_id, num_headers)?
                     }
-                    AbiVersion::ProxyAbiVersion0_2_0 => proxy_on_response_headers
+                    AbiVersion::ProxyAbiVersion0_2_1 => proxy_on_response_headers
                         .get3::<i32, i32, i32, i32>()?(
                         context_id,
                         num_headers,
